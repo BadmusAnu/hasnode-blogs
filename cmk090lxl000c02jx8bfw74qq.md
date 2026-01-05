@@ -47,9 +47,9 @@ Consequently, these constraints both lead to the fact that indices need to be li
 When dealing with Time-Series data, like our logs, we will opt for an opensearch feature called Data Stream, which provides us with a good abstraction on managing indicies especially rollovers.  
 DataStream is an abstraction layer for managing append-only time-series data across multiple "backing indices." One of the core caveats of datastream is that a date-time field must always be present, and once defined, that field can’t change. That is the reason why there only usable by time-series data.
 
-A complete workflow of using datastreams, your logs when first received will be stored on a hidden index called .ds-team-red-service-a-000001. When the size of this index reaches 30GB, the logs are rolled over, and a new index called .ds-team-red-service-a-000002 is created. The intial index -000001 remains queryable, but data can’t be appened to it anymore, hence it is now a readonly state, this matters because after the index is moved to readonly state, it’s common to change values like force merge segment, to ensure data compatibility or number of replica to zero, has it’s expected that those logs are less important and the risk are woth the disk and compute saves.  
-Each index contains certain metadata that determines if it’s open, closed, writable, etc. The tag that determines which of all these indices is currently active for write is the `"is_write_index": true`When data needs to be written, OpenSearch looks through the backing indices (.ds-team-red-service-a-000001, .ds-team-red-service-a-000002, etc) and all we have `"is_write_index": false` except the currently active index.  
-  
+A complete workflow of using datastreams, your logs when first received will be stored on a hidden index called .ds-team-red-service-a-000001. When the size of this index reaches 30GB, the logs are rolled over, and a new index called .ds-team-red-service-a-000002 is created. The initial index -000001 remains queryable, but data can’t be appended to it anymore, hence it is now a readonly state, this matters because after the index is moved to readonly state, it’s common to change values like force merge segment, to ensure data compatibility or number of replica to zero, has it’s expected that those logs are less important and the risk are worth the disk and compute saves.  
+Each index contains certain metadata that determines if it’s open, closed, writable, etc. The tag that determines which of all these indices is currently active for write is the `"is_write_index": true`When data needs to be written, OpenSearch looks through the backing indices (.ds-team-red-service-a-000001, .ds-team-red-service-a-000002, etc) and all we have `"is_write_index": false` except the currently active index.
+
 The image below shows a full relationship of the lifecycle, as well as the decision making logics
 
 ![](https://cdn.hashnode.com/res/hashnode/image/upload/v1767561280046/507eee94-0f8c-47cc-9ee1-12bc503df1c7.png align="left")
@@ -136,3 +136,34 @@ PUT _index_template/team_logs_template
   }
 }
 ```
+
+##   
+Log Retrieval: Developer Experience (DX)
+
+Our problem statement requires making log retrieval as straightforward as possible for five different engineering teams. To achieve this, we leverage **Tenants**, **Index Patterns**, and **Dashboards**. Below we have some image about  
+
+The **Global Tenant** is the default, shared workspace in OpenSearch. In our design, the Global Tenant satisfies the requirement for a "global view where all logs can potentially be found." It is the one place where an SRE or Architect can build a single dashboard that correlates logs across all five teams to debug cross-service outages.
+
+**The "Team Tenant" (Silos):** Conversely, each team should have their own private tenant. This acts as a personalized silo where they only see their own index patterns and dashboards, preventing the UI from becoming cluttered with other teams' data.  
+  
+An **Index Pattern** is a regex-based filter that allows you to query multiple backing indices at once.
+
+> NB: when new field are added to the logs, this fields are not automatically searchable or visible on the index patterns, and it’s necessary to refresh the index pattern so this can be searchable.
+
+**Matching Data Streams:** Since our Data Stream creates hidden indices like `.ds-team-red-service-a-000001`, a developer simply creates a pattern like `team-red-service-a-*`. This pattern "follows" the data as it rolls over from Hot to Warm.
+
+**Team-Wide Patterns:** A developer can also create a broader pattern like `team-red-*` to see all logs from every service their team owns in one single view.  
+  
+**Dashboard:** An OpenSearch Dashboard is a collection of visualizations, searches, and maps organized into a single pane. Dashboards provide at-a-glance insights into your data and allow users to filter through millions of logs using a point-and-click interface. It’s can be used by team to aggregate and provide a single point filter for log fields like `“log_level” : ERROR`  
+  
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1767644965278/567ff2ec-f00b-4aa5-8799-b20d280cf9e8.png align="center")
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1767644975141/cf51ac95-5788-4b28-b3da-9fda5f81f180.png align="center")
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1767645221712/900a7999-5658-46b3-84b1-f5783b513878.png align="center")
+
+  
+  
+In our discussion, we have important concepts like cluster design, lifecycle management, sharding indexing, and log retriveal for developers, with concepts we have been able to design and provision a stable and highly available cluster.  
+Some further topics that can explored outside of this article about opensearch are RBAC, opensearch API and how they can be used for data reindexing, cloning and other tasks, etc.
