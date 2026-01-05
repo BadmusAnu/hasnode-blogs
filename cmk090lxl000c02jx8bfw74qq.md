@@ -45,7 +45,7 @@ Consequently, these constraints both lead to the fact that indices need to be li
 
 ## Lifecycle Management
 
-When dealing with Time-Series data, like our logs, we will opt for an OpenSearch feature called Data Stream, which provides us with a good abstraction on managing indicies especially rollovers.  
+When dealing with Time-Series data, like our logs, we will opt for an OpenSearch feature called Data Stream, which provides us with a good abstraction on managing indices especially rollovers.  
 DataStream is an abstraction layer for managing append-only time-series data across multiple "backing indices." One of the core caveats of datastream is that a date-time field must always be present, and once defined, that field can’t change. That is the reason why there only usable with time-series data.
 
 A complete workflow of using datastreams, your logs when first received will be stored on a hidden index called .ds-team-red-service-a-000001. When the size of this index reaches 30GB, the logs are rolled over, and a new index called .ds-team-red-service-a-000002 is created. The initial index -000001 remains queryable, but data can’t be appended to it anymore, hence it is now a readonly state, this matters because after the index is moved to readonly state, it’s common to change values like force merge segment, to ensure data compatibility or number of replica to zero, has it’s expected that those logs are less important and the risk are worth the disk and compute saves.  
