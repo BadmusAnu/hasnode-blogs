@@ -3,6 +3,7 @@ title: "AWS OpenSearch Quick Dive"
 datePublished: Sun Jan 04 2026 21:33:21 GMT+0000 (Coordinated Universal Time)
 cuid: cmk090lxl000c02jx8bfw74qq
 slug: aws-opensearch-quick-dive
+ogImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1767647993462/ec7ed29e-5545-4db3-befc-80c206cda710.png
 tags: aws, programming, logging, opensearchservice
 
 ---
@@ -16,7 +17,7 @@ A medium-sized company with 5 engineering teams, with each team owning one or mo
 
 ## Cluster Design and Indexing
 
-AWS Openserach is mainly a fixed cluster, i.e., the number of nodes doesn’t grow or shrink with load. In our design, we will be working with 5 node cluster, each with 100GB volumes attached to it (giving a total of 500 GB), primaries and replica counts are 5 and 1, respectively. To explain this, we discuss some open search terminology briefly
+AWS Openserach is mainly a fixed cluster, i.e., the number of nodes doesn’t grow or shrink with load. In our design, we will be working with 5 node cluster, each with 100GB volumes attached to it (giving a total of 500 GB), primaries and replica counts are 5 and 1, respectively. To explain this, we discuss some OpenSearch terminology briefly
 
 ### Terminology:
 
@@ -166,4 +167,9 @@ An **Index Pattern** is a regex-based filter that allows you to query multiple b
 In our discussion, we have important concepts like cluster design, lifecycle management, sharding indexing, and log retrieval for developers, with concepts we have been able to design and provision a stable and highly available cluster.  
 Some further topics that can be explored outside of this article about OpenSearch are RBAC, OpenSearch API, and how they can be used for data reindexing, cloning, and other tasks, etc.  
   
-Thank you for reading this version of Quick Dive. See you at the next one.
+Included below are some official documentation and guides that can provide additional information.  
+  
+Thank you for reading this version of Quick Dive. See you at the next one.  
+  
+
+[AWS OpenSearch Sharding](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/bp-sharding.html), [Official OpenSearch Documentation](https://docs.opensearch.org/)
