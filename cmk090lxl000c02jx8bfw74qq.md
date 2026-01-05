@@ -3,7 +3,7 @@ title: "AWS OpenSearch Quick Dive"
 datePublished: Sun Jan 04 2026 21:33:21 GMT+0000 (Coordinated Universal Time)
 cuid: cmk090lxl000c02jx8bfw74qq
 slug: aws-opensearch-quick-dive
-ogImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1767647993462/ec7ed29e-5545-4db3-befc-80c206cda710.png
+cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1767648198437/bdc8f4a9-742c-4e38-b70e-fa3a34295fa7.png
 tags: aws, programming, logging, opensearchservice
 
 ---
